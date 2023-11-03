@@ -7,7 +7,7 @@ const config = {
 		new CopyPlugin({
 			patterns: [
 				{ from: "src/assets", to: "" },
-				{ from: "src/images", to: "" },
+				// { from: "src/images", to: "" },
 			],
 		}),
 	],
@@ -21,8 +21,8 @@ const config = {
 			},
 			{
 				test: /\.html/,
-				type: "asset/resource"         
-			}
+				type: "asset/resource",
+			},
 		],
 	},
 	resolve: {

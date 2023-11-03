@@ -51,7 +51,6 @@
         "no-duplicate-imports":"warn",
         "no-useless-constructor":"warn",
         "no-loop-func":"warn",
-        "no-param-reassign":"warn",
         "prefer-arrow-callback":"warn",
         "no-array-constructor": "warn",
         "object-shorthand": "warn",

@@ -1,8 +1,35 @@
-import { Option, ifSome } from "./option";
-
 export type Point = [number, number];
 export function addPoint(p1: Point, p2: Point): Point {
 	return [p1[0] + p2[0], p1[1] + p2[1]];
+}
+
+export function eqPoint(p1: Point, p2: Point): boolean {
+	if (p1[0] === p2[0] && p1[1] === p2[1]) return true;
+	return false;
+}
+
+/**
+	Unwrap option of `null|undefined|T` to `T` throw error if value is not `T`.
+    `expect()` is preferred to this function as it gives better error messages
+ */
+export function unwrap<T>(input: T | null | undefined): T {
+	if (input === null || input === undefined) {
+		throw new TypeError("Unwrap called on null/undefined value");
+	}
+	return input;
+}
+
+/**
+	Unwrap option of `null|undefined|T` to `T` throw error with `exceptionMessage` if value is not `T`
+*/
+export function expect<T>(
+	input: T | null | undefined,
+	exceptionMessage: string
+): T {
+	if (input === null || input === undefined) {
+		throw new TypeError(exceptionMessage);
+	}
+	return input;
 }
 
 //
@@ -10,24 +37,25 @@ export function addPoint(p1: Point, p2: Point): Point {
 //
 
 // Who needs Jquery?
-export function $(elementId: string): Option<HTMLElement> {
+export function $(elementId: string): null | HTMLElement {
 	return document.getElementById(elementId);
 }
 
 export function createCanvas(
 	width: number,
 	height: number
-): Option<{ canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D }> {
-	let ret = null;
-	ifSome(document.createElement("canvas"), (canvas) => {
-		canvas.width = width;
-		canvas.height = height;
-		ifSome(canvas.getContext("2d"), (ctx) => {
-			ctx.imageSmoothingEnabled = false;
-			ret = { canvas, ctx };
-		});
-	});
-	return ret;
+): null | { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
+	const canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	if (canvas === null) {
+		return null;
+	}
+	const ctx = canvas.getContext("2d");
+	if (ctx === null) {
+		return null;
+	}
+	return { canvas, ctx };
 }
 
 export function clearBody(): void {
