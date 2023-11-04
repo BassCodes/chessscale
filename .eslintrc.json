@@ -44,7 +44,6 @@
         "prefer-destructuring":"warn",
         "no-restricted-globals":"warn",
         "prefer-template":"warn",
-        "class-methods-use-this":"warn",
         "template-curly-spacing": ["warn", "never"],
         "no-useless-rename":"warn",
         "no-useless-escape":"warn",
