@@ -1,7 +1,7 @@
+import { ChessPiece, ChessPieceColor, Pawn } from "./chess_piece";
 import {
 	$,
 	Point,
-	Unimplemented,
 	Unreachable,
 	addPoint,
 	createCanvas,
@@ -22,8 +22,7 @@ async function main(): Promise<void> {
 	).appendChild(canvas);
 
 	// Temporarily just creating a chunk
-	const c = new Chunk();
-	c.tiles[3][6] = new Pawn(ChessPieceColor.White);
+	const game = new ChessGame();
 
 	// TODO: The selection stuff should also be moved into some gamelogic class
 	let selected: null | Point = null;
@@ -34,7 +33,7 @@ async function main(): Promise<void> {
 		];
 		if (selected !== null && eqPoint(position, selected)) {
 			selected = null;
-		} else if (c.getPiece(position[0], position[1]) !== null) {
+		} else if (game.getPiece(position[0], position[1]) !== null) {
 			selected = position;
 		} else {
 			selected = null;
@@ -63,7 +62,7 @@ async function main(): Promise<void> {
 				TILE_SIZE,
 				TILE_SIZE
 			);
-			const piece = c.getPiece(selected[0], selected[1]) as ChessPiece;
+			const piece = game.getPiece(selected[0], selected[1]) as ChessPiece;
 			if (piece === null) {
 				throw new Unreachable();
 			}
@@ -79,7 +78,7 @@ async function main(): Promise<void> {
 			}
 		}
 
-		c.draw(ctx);
+		game.drawPieces(ctx);
 
 		requestAnimationFrame(frame);
 	}
@@ -88,62 +87,26 @@ async function main(): Promise<void> {
 
 document.addEventListener("DOMContentLoaded", main);
 
-enum ChessPieceColor {
-	White,
-	black,
-}
-
-class ChessPiece {
-	color: ChessPieceColor;
-	facing: Point;
-	constructor(color: ChessPieceColor) {
-		this.color = color;
-		if (color === ChessPieceColor.White) {
-			// I didn't think too hard about this
-			this.facing = [0, -1];
-		} else {
-			this.facing = [0, 1];
-		}
-	}
-	// Points in which the piece can move relative to the current point
-	getMoves(): Array<Point> {
-		throw new Unimplemented();
-	}
-	// Points in which the piece can capture (if there is a piece) relative to the current point
-	getCaptures(): Array<Point> {
-		// By default, the piece can capture in any place it can move (assuming there is a piece in that location)
-		return this.getMoves();
-	}
-}
-
-class Pawn extends ChessPiece {
-	getMoves(): Array<Point> {
-		return [this.facing];
-	}
-}
-
 type tileState = null | ChessPiece;
+const CHUNK_WIDTH = 8;
 
-class Chunk {
-	tiles: tileState[][];
+class ChessGame {
+	private chunks: Array<Chunk>;
 	constructor() {
-		this.tiles = Array(8);
-		for (let i = 0; i < 8; i++) {
-			this.tiles[i] = Array(8).fill(null);
-		}
-		console.log(this.tiles);
+		this.chunks = [new Chunk(0, 0)];
+		this.chunks[0].tiles[5][5] = new Pawn(ChessPieceColor.White);
 	}
 
-	// TODO: move this method to GameBoard class when making that class
-	draw(ctx: CanvasRenderingContext2D): void {
-		for (const [x, column] of this.tiles.entries()) {
-			for (const [y, item] of column.entries()) {
-				if (item !== null) {
+	drawPieces(ctx: CanvasRenderingContext2D): void {
+		for (const chunk of this.chunks) {
+			for (const [x, column] of chunk.tiles.entries()) {
+				for (const [y, item] of column.entries()) {
+					if (item === null) continue;
 					const color = item.color === ChessPieceColor.White ? "#0FF" : "#00f";
 					ctx.fillStyle = color;
 					ctx.fillRect(
-						x * TILE_SIZE + 8,
-						y * TILE_SIZE + 8,
+						(x + CHUNK_WIDTH * chunk.chunkCoordinate[0]) * TILE_SIZE + 8,
+						(y + CHUNK_WIDTH * chunk.chunkCoordinate[1]) * TILE_SIZE + 8,
 						TILE_SIZE - 16,
 						TILE_SIZE - 16
 					);
@@ -151,8 +114,35 @@ class Chunk {
 			}
 		}
 	}
-	// TODO: also move this into gameboard class
+	private getChunk(cx: number, cy: number): Chunk | null {
+		const chunk = this.chunks.find(
+			(c) => c.chunkCoordinate[0] === cx && c.chunkCoordinate[1] === cy
+		);
+		if (chunk === undefined) {
+			return null;
+		}
+		return chunk;
+	}
 	getPiece(x: number, y: number): ChessPiece | null {
-		return this.tiles[x]?.[y];
+		const chunk = this.getChunk(
+			Math.floor(x / CHUNK_WIDTH),
+			Math.floor(y / CHUNK_WIDTH)
+		);
+		if (chunk === null) {
+			return null;
+		}
+		return chunk.tiles[x][y];
+	}
+}
+
+class Chunk {
+	tiles: Array<Array<tileState>>;
+	chunkCoordinate: Point;
+	constructor(x: number, y: number) {
+		this.chunkCoordinate = [x, y];
+		this.tiles = Array(8);
+		for (let i = 0; i < 8; i++) {
+			this.tiles[i] = Array(8).fill(null);
+		}
 	}
 }

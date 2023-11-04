@@ -1,0 +1,9 @@
+Add Sprites
+Add Piece Movement
+
+
+
+## long term
+Animations
+Sounds
+Cards
