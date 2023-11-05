@@ -1,7 +1,5 @@
 Add Sprites
-Add Piece Movement
-
-
+Add camera (zoom/pan)
 
 ## long term
 Animations
