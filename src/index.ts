@@ -1,15 +1,15 @@
-import { ChessPiece, ChessPieceColor, Pawn } from "./chess_piece";
 import {
-	$,
-	Point,
-	Unreachable,
-	addPoint,
-	createCanvas,
-	eqPoint,
-	expect,
-} from "./lib/util";
-
-const TILE_SIZE = 64;
+	Bishop,
+	ChessPieceColor,
+	King,
+	Knight,
+	Pawn,
+	Queen,
+	Rook,
+} from "./chess_piece";
+import { TILE_SIZE } from "./constants";
+import { GameLogic } from "./game_logic";
+import { $, Point, createCanvas, expect } from "./lib/util";
 
 async function main(): Promise<void> {
 	const { canvas, ctx } = expect(
@@ -21,28 +21,28 @@ async function main(): Promise<void> {
 		"Could not insert playfield canvas into DOM"
 	).appendChild(canvas);
 
-	// Temporarily just creating a chunk
-	const game = new ChessGame();
+	const game = new GameLogic();
+	for (let i = 0; i < 8; i++) {
+		game.board.setPiece(i, 6, new Pawn(ChessPieceColor.White));
+	}
+	game.board.setPiece(0, 7, new Rook(ChessPieceColor.White));
+	game.board.setPiece(7, 7, new Rook(ChessPieceColor.White));
+	game.board.setPiece(6, 7, new Knight(ChessPieceColor.White));
+	game.board.setPiece(1, 7, new Knight(ChessPieceColor.White));
+	game.board.setPiece(2, 7, new Bishop(ChessPieceColor.White));
+	game.board.setPiece(5, 7, new Bishop(ChessPieceColor.White));
+	game.board.setPiece(4, 7, new King(ChessPieceColor.White));
+	game.board.setPiece(3, 7, new Queen(ChessPieceColor.White));
 
-	// TODO: The selection stuff should also be moved into some gamelogic class
-	let selected: null | Point = null;
+	let last_mouse_event: null | MouseEvent = null;
 	canvas.addEventListener("click", (e) => {
-		const position: Point = [
-			Math.floor(e.x / TILE_SIZE),
-			Math.floor(e.y / TILE_SIZE),
-		];
-		if (selected !== null && eqPoint(position, selected)) {
-			selected = null;
-		} else if (game.getPiece(position[0], position[1]) !== null) {
-			selected = position;
-		} else {
-			selected = null;
-		}
+		last_mouse_event = e;
 	});
 
+	ctx.lineWidth = 5;
 	// Main loop
-	ctx.lineWidth = 2;
 	function frame(): void {
+		// TODO: Move to chessboard class
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if ((x + y) % 2 === 0) {
@@ -54,31 +54,17 @@ async function main(): Promise<void> {
 			}
 		}
 
-		ctx.strokeStyle = "red";
-		if (selected !== null) {
-			ctx.strokeRect(
-				selected[0] * TILE_SIZE,
-				selected[1] * TILE_SIZE,
-				TILE_SIZE,
-				TILE_SIZE
-			);
-			const piece = game.getPiece(selected[0], selected[1]) as ChessPiece;
-			if (piece === null) {
-				throw new Unreachable();
-			}
-			ctx.strokeStyle = "green";
-			for (const move of piece.getMoves()) {
-				const position = addPoint(selected, move);
-				ctx.strokeRect(
-					position[0] * TILE_SIZE,
-					position[1] * TILE_SIZE,
-					TILE_SIZE,
-					TILE_SIZE
-				);
-			}
+		if (last_mouse_event !== null) {
+			const position: Point = [
+				Math.floor(last_mouse_event.x / TILE_SIZE),
+				Math.floor(last_mouse_event.y / TILE_SIZE),
+			];
+			game.clickBoard(...position);
+			last_mouse_event = null;
 		}
 
-		game.drawPieces(ctx);
+		game.drawMovements(ctx);
+		game.board.drawPieces(ctx);
 
 		requestAnimationFrame(frame);
 	}
@@ -86,63 +72,3 @@ async function main(): Promise<void> {
 }
 
 document.addEventListener("DOMContentLoaded", main);
-
-type tileState = null | ChessPiece;
-const CHUNK_WIDTH = 8;
-
-class ChessGame {
-	private chunks: Array<Chunk>;
-	constructor() {
-		this.chunks = [new Chunk(0, 0)];
-		this.chunks[0].tiles[5][5] = new Pawn(ChessPieceColor.White);
-	}
-
-	drawPieces(ctx: CanvasRenderingContext2D): void {
-		for (const chunk of this.chunks) {
-			for (const [x, column] of chunk.tiles.entries()) {
-				for (const [y, item] of column.entries()) {
-					if (item === null) continue;
-					const color = item.color === ChessPieceColor.White ? "#0FF" : "#00f";
-					ctx.fillStyle = color;
-					ctx.fillRect(
-						(x + CHUNK_WIDTH * chunk.chunkCoordinate[0]) * TILE_SIZE + 8,
-						(y + CHUNK_WIDTH * chunk.chunkCoordinate[1]) * TILE_SIZE + 8,
-						TILE_SIZE - 16,
-						TILE_SIZE - 16
-					);
-				}
-			}
-		}
-	}
-	private getChunk(cx: number, cy: number): Chunk | null {
-		const chunk = this.chunks.find(
-			(c) => c.chunkCoordinate[0] === cx && c.chunkCoordinate[1] === cy
-		);
-		if (chunk === undefined) {
-			return null;
-		}
-		return chunk;
-	}
-	getPiece(x: number, y: number): ChessPiece | null {
-		const chunk = this.getChunk(
-			Math.floor(x / CHUNK_WIDTH),
-			Math.floor(y / CHUNK_WIDTH)
-		);
-		if (chunk === null) {
-			return null;
-		}
-		return chunk.tiles[x][y];
-	}
-}
-
-class Chunk {
-	tiles: Array<Array<tileState>>;
-	chunkCoordinate: Point;
-	constructor(x: number, y: number) {
-		this.chunkCoordinate = [x, y];
-		this.tiles = Array(8);
-		for (let i = 0; i < 8; i++) {
-			this.tiles[i] = Array(8).fill(null);
-		}
-	}
-}
