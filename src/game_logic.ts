@@ -1,3 +1,4 @@
+import Camera from "./camera.js";
 import { ChessBoard } from "./chess_board";
 import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
@@ -46,12 +47,12 @@ export class GameLogic {
 		}
 	}
 
-	drawMovements(ctx: CanvasRenderingContext2D): void {
-		ctx.strokeStyle = "red";
+	drawMovements(cam: Camera): void {
+		cam.ctx.strokeStyle = "red";
 		if (this.selectedPosition === null) {
 			return;
 		}
-		ctx.strokeRect(
+		cam.ctx.strokeRect(
 			this.selectedPosition[0] * TILE_SIZE,
 			this.selectedPosition[1] * TILE_SIZE,
 			TILE_SIZE,
@@ -61,10 +62,10 @@ export class GameLogic {
 		if (piece === null) {
 			throw new Unreachable();
 		}
-		ctx.strokeStyle = "green";
+		cam.ctx.strokeStyle = "green";
 		for (const move of piece.getMoves()) {
 			const position = addPoint(this.selectedPosition, move);
-			ctx.strokeRect(
+			cam.ctx.strokeRect(
 				position[0] * TILE_SIZE,
 				position[1] * TILE_SIZE,
 				TILE_SIZE,

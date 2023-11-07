@@ -1,17 +1,27 @@
+import { Point } from "./lib/util.js";
+
 /**
  * Camera by @robashton returns Camera object.
  *  constructor initial parameters:
- *  @param {ctx} str *required 
+ *  @param {ctx} str *required
  *  @param {settings} str *optional
-  */
+ */
 export default class Camera {
 	distance: number;
-	lookAt: number[];
+	lookAt: [number, number];
 	ctx: CanvasRenderingContext2D;
 	fieldOfView: number;
-	viewport: {left: number, right: number, top: number, bottom: number, width: number, height: number, scale: [number, number]};
+	viewport: {
+		left: number;
+		right: number;
+		top: number;
+		bottom: number;
+		width: number;
+		height: number;
+		scale: [number, number];
+	};
 	aspectRatio: number;
-    
+
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.distance = 512.0;
 		this.lookAt = [256, 256];
@@ -24,27 +34,27 @@ export default class Camera {
 			bottom: 0,
 			width: 0,
 			height: 0,
-			scale: [1.0, 1.0]
+			scale: [1.0, 1.0],
 		};
 		this.aspectRatio = ctx.canvas.width / ctx.canvas.height;
 		this.init();
 	}
 
 	/**
-     * Camera Initialization
-     * -Add listeners.
-     * -Initial calculations.
-     */
+	 * Camera Initialization
+	 * -Add listeners.
+	 * -Initial calculations.
+	 */
 	init(): void {
 		this.addListeners();
 		this.updateViewport();
 	}
 
 	/**
-     * Applies to canvas ctx the parameters:
-     *  -Scale
-     *  -Translation
-     */
+	 * Applies to canvas ctx the parameters:
+	 *  -Scale
+	 *  -Translation
+	 */
 	begin(): void {
 		this.ctx.save();
 		this.applyScale();
@@ -52,35 +62,35 @@ export default class Camera {
 	}
 
 	/**
-     * 2d ctx restore() method
-     */
+	 * 2d ctx restore() method
+	 */
 	end(): void {
 		this.ctx.restore();
 	}
 
 	/**
-     * 2d ctx scale(Camera.viewport.scale[0], Camera.viewport.scale[0]) method
-     */
+	 * 2d ctx scale(Camera.viewport.scale[0], Camera.viewport.scale[0]) method
+	 */
 	applyScale(): void {
 		this.ctx.scale(this.viewport.scale[0], this.viewport.scale[1]);
 	}
 
 	/**
-     * 2d ctx translate(-Camera.viewport.left, -Camera.viewport.top) method
-     */
+	 * 2d ctx translate(-Camera.viewport.left, -Camera.viewport.top) method
+	 */
 	applyTranslation(): void {
 		this.ctx.translate(-this.viewport.left, -this.viewport.top);
 	}
 
 	/**
-     * Camera.viewport data update
-     */
+	 * Camera.viewport data update
+	 */
 	updateViewport(): void {
 		this.aspectRatio = this.ctx.canvas.width / this.ctx.canvas.height;
 		this.viewport.width = this.distance * Math.tan(this.fieldOfView);
 		this.viewport.height = this.viewport.width / this.aspectRatio;
-		this.viewport.left = this.lookAt[0] - (this.viewport.width / 2.0);
-		this.viewport.top = this.lookAt[1] - (this.viewport.height / 2.0);
+		this.viewport.left = this.lookAt[0] - this.viewport.width / 2.0;
+		this.viewport.top = this.lookAt[1] - this.viewport.height / 2.0;
 		this.viewport.right = this.viewport.left + this.viewport.width;
 		this.viewport.bottom = this.viewport.top + this.viewport.height;
 		this.viewport.scale[0] = this.ctx.canvas.width / this.viewport.width;
@@ -88,58 +98,38 @@ export default class Camera {
 	}
 
 	/**
-     * Zooms to certain z distance
-     * @param {*z distance} z 
-     */
+	 * Zooms to certain z distance
+	 * @param {*z distance} z
+	 */
 	zoomTo(z: number): void {
 		this.distance = z;
 		this.updateViewport();
 	}
 
 	/**
-     * Moves the centre of the viewport to new x, y coords (updates Camera.lookAt)
-     * @param {x axis coord} x 
-     * @param {y axis coord} y 
-     */
+	 * Moves the centre of the viewport to new x, y coords (updates Camera.lookAt)
+	 * @param {x axis coord} x
+	 * @param {y axis coord} y
+	 */
 	moveTo(x: number, y: number): void {
 		this.lookAt[0] = x;
 		this.lookAt[1] = y;
 		this.updateViewport();
 	}
 
-	/**
-     * Transform a coordinate pair from screen coordinates (relative to the canvas) into world coordinates (useful for intersection between mouse and entities)
-     * Optional: obj can supply an object to be populated with the x/y (for object-reuse in garbage collection efficient code)
-     * @param {x axis coord} x 
-     * @param {y axis coord} y 
-     * @param {obj can supply an object to be populated with the x/y} obj 
-     * @returns 
-     */
-	screenToWorld(x: number, y: number, obj: { x?: number; y?: number; }): object {
-		obj = obj || {};
-		obj.x = (x / this.viewport.scale[0]) + this.viewport.left;
-		obj.y = (y / this.viewport.scale[1]) + this.viewport.top;
-		return obj;
+	screenToWorld(x: number, y: number): Point {
+		const nx = x / this.viewport.scale[0] + this.viewport.left;
+		const ny = y / this.viewport.scale[1] + this.viewport.top;
+		return [nx, ny];
 	}
 
-	/**
-     * Transform a coordinate pair from world coordinates into screen coordinates (relative to the canvas) - useful for placing DOM elements over the scene.
-     * Optional: obj can supply an object to be populated with the x/y (for object-reuse in garbage collection efficient code).
-     * @param {x axis coord} x 
-     * @param {y axis coord} y  
-     * @param {obj can supply an object to be populated with the x/y} obj 
-     * @returns 
-     */
-	worldToScreen(x: number, y: number, obj: { x?: number; y?: number; }): object {
-		obj = obj || {};
-		obj.x = (x - this.viewport.left) * (this.viewport.scale[0]);
-		obj.y = (y - this.viewport.top) * (this.viewport.scale[1]);
-		return obj;
+	worldToScreen(x: number, y: number): Point {
+		const nx = (x - this.viewport.left) * this.viewport.scale[0];
+		const ny = (y - this.viewport.top) * this.viewport.scale[1];
+		return [nx, ny];
 	}
-
 
 	addListeners(): void {
-
 		let mouseIsDown = false;
 
 		window.addEventListener("mousedown", () => {
@@ -152,17 +142,23 @@ export default class Camera {
 
 		window.addEventListener("mousemove", (e) => {
 			if (e.shiftKey && mouseIsDown) {
-				this.ctx.clearRect(0,0,100000,100000);
+				this.ctx.clearRect(0, 0, 100000, 100000);
 				const [currentCamX, currentCamY] = this.lookAt;
-				this.moveTo(currentCamX - (e.movementX * this.distance) / 512, currentCamY - (e.movementY * this.distance) / 512);
+				this.moveTo(
+					currentCamX - (e.movementX * this.distance) / 512,
+					currentCamY - (e.movementY * this.distance) / 512
+				);
 			}
 		});
 
 		window.onwheel = (e): void => {
-			this.ctx.clearRect(0,0,100000,100000);
-			let zoomLevel = this.distance + (e.deltaY * 2);
+			this.ctx.clearRect(0, 0, 100000, 100000);
+			let zoomLevel = this.distance + e.deltaY * 2;
 			// const [currentCamX, currentCamY] = this.lookAt;
-			// this.moveTo(currentCamX - (currentCamX - e.x) / 2, currentCamY - (currentCamY - e.y) / 2);
+			// this.moveTo(
+			// 	currentCamX - (currentCamX - e.x) / 2,
+			// 	currentCamY - (currentCamY - e.y) / 2
+			// );
 
 			if (zoomLevel <= 1) {
 				zoomLevel = 1;
@@ -170,7 +166,5 @@ export default class Camera {
 
 			this.zoomTo(zoomLevel);
 		};
-
-		
 	}
 }

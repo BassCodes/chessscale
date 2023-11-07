@@ -46,17 +46,6 @@ async function main(): Promise<void> {
 	// Main loop
 	function frame(): void {
 		camera.begin();
-		// TODO: Move to chessboard class
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if ((x + y) % 2 === 0) {
-					ctx.fillStyle = "white";
-				} else {
-					ctx.fillStyle = "black";
-				}
-				ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-			}
-		}
 
 		if (last_mouse_event !== null) {
 			const position: Point = [
@@ -66,9 +55,10 @@ async function main(): Promise<void> {
 			game.clickBoard(...position);
 			last_mouse_event = null;
 		}
-		
-		game.drawMovements(ctx);
-		game.board.drawPieces(ctx);
+
+		game.drawMovements(camera);
+		game.board.drawChunks(camera);
+		game.board.drawPieces(camera);
 		camera.end();
 
 		requestAnimationFrame(frame);

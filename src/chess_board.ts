@@ -1,3 +1,4 @@
+import Camera from "./camera.js";
 import { ChessPiece, ChessPieceColor } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
 import { Point } from "./lib/util";
@@ -24,20 +25,45 @@ export class ChessBoard {
 	private chunks: Array<Chunk>;
 	constructor() {
 		this.chunks = [new Chunk(0, 0)];
+		this.chunks.push(new Chunk(0, 1));
+		this.chunks.push(new Chunk(1, 1));
+		this.chunks.push(new Chunk(0, -1));
+		this.chunks.push(new Chunk(1, 0));
+		this.chunks.push(new Chunk(-1, -1));
 	}
 
-	drawPieces(ctx: CanvasRenderingContext2D): void {
+	drawPieces(cam: Camera): void {
 		for (const chunk of this.chunks) {
 			for (const [x, column] of chunk.tiles.entries()) {
 				for (const [y, item] of column.entries()) {
 					if (item === null) continue;
 					const color = item.color === ChessPieceColor.White ? "#0FF" : "#00f";
-					ctx.fillStyle = color;
-					ctx.fillRect(
+					cam.ctx.fillStyle = color;
+					cam.ctx.fillRect(
 						(x + CHUNK_WIDTH * chunk.chunkCoordinate[0]) * TILE_SIZE + 8,
 						(y + CHUNK_WIDTH * chunk.chunkCoordinate[1]) * TILE_SIZE + 8,
 						TILE_SIZE - 16,
 						TILE_SIZE - 16
+					);
+				}
+			}
+		}
+	}
+
+	drawChunks(cam: Camera): void {
+		for (const chunk of this.chunks) {
+			for (let x = 0; x < 8; x++) {
+				for (let y = 0; y < 8; y++) {
+					if ((x + y) % 2 === 0) {
+						cam.ctx.fillStyle = "white";
+					} else {
+						cam.ctx.fillStyle = "black";
+					}
+					cam.ctx.fillRect(
+						(x + chunk.chunkCoordinate[0] * CHUNK_WIDTH) * TILE_SIZE,
+						(y + chunk.chunkCoordinate[1] * CHUNK_WIDTH) * TILE_SIZE,
+						TILE_SIZE,
+						TILE_SIZE
 					);
 				}
 			}
