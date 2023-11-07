@@ -10,6 +10,7 @@ import {
 import { TILE_SIZE } from "./constants";
 import { GameLogic } from "./game_logic";
 import { $, Point, createCanvas, expect } from "./lib/util";
+import Camera from "./camera";
 
 async function main(): Promise<void> {
 	const { canvas, ctx } = expect(
@@ -20,6 +21,8 @@ async function main(): Promise<void> {
 		$("pfcontainer"),
 		"Could not insert playfield canvas into DOM"
 	).appendChild(canvas);
+
+	const camera = new Camera(ctx);
 
 	const game = new GameLogic();
 	for (let i = 0; i < 8; i++) {
@@ -42,6 +45,7 @@ async function main(): Promise<void> {
 	ctx.lineWidth = 5;
 	// Main loop
 	function frame(): void {
+		camera.begin();
 		// TODO: Move to chessboard class
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -62,9 +66,10 @@ async function main(): Promise<void> {
 			game.clickBoard(...position);
 			last_mouse_event = null;
 		}
-
+		
 		game.drawMovements(ctx);
 		game.board.drawPieces(ctx);
+		camera.end();
 
 		requestAnimationFrame(frame);
 	}
