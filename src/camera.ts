@@ -152,7 +152,6 @@ export default class Camera {
 
 		window.addEventListener("mousemove", (e) => {
 			if ((e.shiftKey && lmbDown) || rmbDown) {
-				console.log();
 				this.ctx.fillStyle = "#000";
 				this.ctx.fillRect(0, 0, 100000, 100000);
 				const [currentCamX, currentCamY] = this.lookAt;

@@ -7,7 +7,7 @@ export enum ChessPieceColor {
 }
 
 export abstract class ChessPiece {
-	color: ChessPieceColor;
+	readonly color: ChessPieceColor;
 	facing: Point;
 	constructor(color: ChessPieceColor) {
 		this.color = color;

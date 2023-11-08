@@ -1,7 +1,7 @@
 import Camera from "./camera";
 import { ChessPiece } from "./chess_piece";
 import { DARK_SQUARE_COLOR, LIGHT_SQUARE_COLOR, TILE_SIZE } from "./constants";
-import { Point } from "./lib/util";
+import { Point, addPoint, mulPoint } from "./lib/util";
 
 type tileState = null | ChessPiece;
 const CHUNK_WIDTH = 8;
@@ -9,14 +9,15 @@ const CHUNK_WIDTH = 8;
 class Chunk {
 	tiles: Array<Array<tileState>>;
 	discovered: true | Array<Array<boolean>>;
-	chunkCoordinate: Point;
+	readonly chunkCoordinate: Point;
 	constructor(x: number, y: number) {
 		this.chunkCoordinate = [x, y];
 		this.tiles = Array(8);
 		this.discovered = Array(8);
 		for (let i = 0; i < 8; i++) {
 			this.tiles[i] = Array(8).fill(null);
-			this.discovered[i] = Array(8).fill(false);
+			// TODO add area discovery system
+			this.discovered[i] = Array(8).fill(true);
 		}
 	}
 	discoverAll(): void {
@@ -40,11 +41,13 @@ export default class ChessBoard {
 			for (const [x, column] of chunk.tiles.entries()) {
 				for (const [y, item] of column.entries()) {
 					if (item === null) continue;
-
+					const pos: Point = [x, y];
 					cam.ctx.drawImage(
 						item.getImage(),
-						(x + CHUNK_WIDTH * chunk.chunkCoordinate[0]) * TILE_SIZE,
-						(y + CHUNK_WIDTH * chunk.chunkCoordinate[1]) * TILE_SIZE
+						...mulPoint(
+							addPoint(pos, mulPoint(chunk.chunkCoordinate, CHUNK_WIDTH)),
+							TILE_SIZE
+						)
 					);
 				}
 			}
@@ -76,8 +79,7 @@ export default class ChessBoard {
 		cam.ctx.strokeStyle = "green";
 		for (const chunk of this.chunks) {
 			cam.ctx.strokeRect(
-				chunk.chunkCoordinate[0] * CHUNK_WIDTH * TILE_SIZE,
-				chunk.chunkCoordinate[1] * CHUNK_WIDTH * TILE_SIZE,
+				...mulPoint(chunk.chunkCoordinate, CHUNK_WIDTH * TILE_SIZE),
 				CHUNK_WIDTH * TILE_SIZE,
 				CHUNK_WIDTH * TILE_SIZE
 			);

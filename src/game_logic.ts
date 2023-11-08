@@ -12,6 +12,8 @@ export default class GameLogic {
 		this.board = new ChessBoard();
 	}
 
+	// TODO: most of this should be within a separate UI class.
+	// This class should be primarily for handling turns of the the players and that stuff
 	clickBoard(x: number, y: number): void {
 		// TODO: mega refactor this
 		const clicked: Point = [
@@ -49,6 +51,7 @@ export default class GameLogic {
 		}
 	}
 
+	// Should also mostly be in UI class
 	drawMovements(cam: Camera): void {
 		if (this.selectedPosition === null) {
 			return;
