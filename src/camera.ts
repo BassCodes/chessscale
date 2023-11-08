@@ -143,7 +143,8 @@ export default class Camera {
 
 		window.addEventListener("mousemove", (e) => {
 			if (e.shiftKey && mouseIsDown) {
-				this.ctx.clearRect(0, 0, 100000, 100000);
+				this.ctx.fillStyle = "#000";
+				this.ctx.fillRect(0, 0, 100000, 100000);
 				const [currentCamX, currentCamY] = this.lookAt;
 				this.moveTo(
 					currentCamX - (e.movementX * this.distance) / 512,
@@ -153,7 +154,8 @@ export default class Camera {
 		});
 
 		window.onwheel = (e): void => {
-			this.ctx.clearRect(0, 0, 100000, 100000);
+			this.ctx.fillStyle = "#000";
+			this.ctx.fillRect(0, 0, 100000, 100000);
 			let zoomLevel = this.distance + e.deltaY * 2;
 			// const [currentCamX, currentCamY] = this.lookAt;
 			// this.moveTo(

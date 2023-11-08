@@ -67,6 +67,19 @@ export default class ChessBoard {
 			}
 		}
 	}
+	drawChunkBorders(cam: Camera): void {
+		cam.ctx.lineWidth = 3;
+		cam.ctx.strokeStyle = "green";
+		for (const chunk of this.chunks) {
+			cam.ctx.strokeRect(
+				chunk.chunkCoordinate[0] * CHUNK_WIDTH * TILE_SIZE,
+				chunk.chunkCoordinate[1] * CHUNK_WIDTH * TILE_SIZE,
+				CHUNK_WIDTH * TILE_SIZE,
+				CHUNK_WIDTH * TILE_SIZE
+			);
+		}
+	}
+
 	private getChunk(chunk_x: number, chunk_y: number): Chunk | null {
 		const chunk = this.chunks.find(
 			(c) =>

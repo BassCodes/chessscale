@@ -12,6 +12,21 @@ import { $, Point, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
 import TextureStore from "./texture_store";
 
+// add debug object to global scope so you can do `debug.toggleBorders()` in the console to enable chunk boarders etc.
+declare global {
+	interface Window {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		debug: any;
+	}
+}
+
+window.debug = {
+	cborders: false,
+	toggleBorders(): void {
+		this.cborders = !this.cborders;
+	},
+};
+
 async function main(): Promise<void> {
 	const { canvas, ctx } = expect(
 		createCanvas(512, 512),
@@ -52,6 +67,9 @@ async function main(): Promise<void> {
 		camera.begin();
 
 		game.board.drawChunks(camera);
+		if (window.debug.cborders) {
+			game.board.drawChunkBorders(camera);
+		}
 		game.drawMovements(camera);
 		game.board.drawPieces(camera);
 
