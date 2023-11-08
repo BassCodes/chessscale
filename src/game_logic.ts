@@ -15,7 +15,7 @@ export class GameLogic {
 
 	clickBoard(x: number, y: number): void {
 		// TODO: mega refactor this
-		const clicked: Point = [x, y];
+		const clicked: Point = [Math.floor(x / TILE_SIZE), Math.floor(y / TILE_SIZE)];
 		if (this.selectedPosition === null) {
 			if (this.board.getPiece(...clicked) !== null) {
 				this.selectedPosition = clicked;

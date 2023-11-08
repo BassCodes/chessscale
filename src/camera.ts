@@ -1,4 +1,5 @@
 import { Point } from "./lib/util.js";
+import { TILE_SIZE } from "./constants";
 
 /**
  * Camera by @robashton returns Camera object.
@@ -118,14 +119,14 @@ export default class Camera {
 	}
 
 	screenToWorld(x: number, y: number): Point {
-		const nx = x / this.viewport.scale[0] + this.viewport.left;
-		const ny = y / this.viewport.scale[1] + this.viewport.top;
+		const nx = (x / this.viewport.scale[0] + this.viewport.left);
+		const ny = (y / this.viewport.scale[1] + this.viewport.top);
 		return [nx, ny];
 	}
 
 	worldToScreen(x: number, y: number): Point {
-		const nx = (x - this.viewport.left) * this.viewport.scale[0];
-		const ny = (y - this.viewport.top) * this.viewport.scale[1];
+		const nx = ((x - this.viewport.left) * this.viewport.scale[0]);
+		const ny = ((y - this.viewport.top) * this.viewport.scale[1]);
 		return [nx, ny];
 	}
 
