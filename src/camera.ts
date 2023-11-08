@@ -1,4 +1,5 @@
 import { Point } from "./lib/util";
+import { TILE_SIZE } from "./constants";
 
 /**
  * Camera by @robashton returns Camera object.

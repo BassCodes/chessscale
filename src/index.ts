@@ -48,19 +48,20 @@ async function main(): Promise<void> {
 	// Main loop
 	function frame(): void {
 		camera.begin();
+		
 
 		if (last_mouse_event !== null) {
-			const position: Point = [
-				Math.floor(last_mouse_event.x / TILE_SIZE),
-				Math.floor(last_mouse_event.y / TILE_SIZE),
-			];
+			const position: Point = camera.screenToWorld((last_mouse_event.x), (last_mouse_event.y));
 			game.clickBoard(...position);
+			
 			last_mouse_event = null;
 		}
 
 		game.drawMovements(camera);
 		game.board.drawChunks(camera);
 		game.board.drawPieces(camera);
+
+		
 		camera.end();
 
 		requestAnimationFrame(frame);
