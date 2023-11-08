@@ -25,8 +25,8 @@ export default class ChessBoard {
 	private chunks: Array<Chunk>;
 	constructor() {
 		this.chunks = [];
-		for (let x = -3; x <= 3; x++) {
-			for (let y = -3; y <= 3; y++) {
+		for (let x = -1; x <= 1; x++) {
+			for (let y = -1; y <= 1; y++) {
 				this.chunks.push(new Chunk(x, y));
 			}
 		}
@@ -106,13 +106,13 @@ export default class ChessBoard {
 		}
 		return chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH];
 	}
-	setPiece(x: number, y: number, put: ChessPiece | null): void {
+	setPiece(x: number, y: number, put: ChessPiece | null): boolean {
 		const chunk = this.getChunk(
 			Math.floor(x / CHUNK_WIDTH),
 			Math.floor(y / CHUNK_WIDTH)
 		);
 		if (chunk === null) {
-			return;
+			return false;
 		}
 		if (x < 0) {
 			x = 8 - (Math.abs(x) % CHUNK_WIDTH);
@@ -121,5 +121,6 @@ export default class ChessBoard {
 			y = 8 - (Math.abs(y) % CHUNK_WIDTH);
 		}
 		chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH] = put;
+		return true;
 	}
 }

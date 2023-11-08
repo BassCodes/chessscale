@@ -8,7 +8,7 @@ import {
 	Rook,
 } from "./chess_piece";
 import GameLogic from "./game_logic";
-import { $, Point, createCanvas, expect } from "./lib/util";
+import { $, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
 import TextureStore from "./texture_store";
 
@@ -28,14 +28,20 @@ window.debug = {
 };
 
 async function main(): Promise<void> {
+	const canvas_size = 512;
 	const { canvas, ctx } = expect(
-		createCanvas(512, 512),
+		createCanvas(canvas_size, canvas_size),
 		"Could not create playfield canvas"
 	);
 	expect(
 		$("pfcontainer"),
 		"Could not insert playfield canvas into DOM"
 	).appendChild(canvas);
+
+	// prevent canvas right click
+	canvas.oncontextmenu = (e): void => {
+		e.preventDefault();
+	};
 
 	await TextureStore.init();
 

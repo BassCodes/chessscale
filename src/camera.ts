@@ -24,7 +24,7 @@ export default class Camera {
 	aspectRatio: number;
 
 	constructor(ctx: CanvasRenderingContext2D) {
-		this.distance = 512.0;
+		this.distance = 512;
 		this.lookAt = [256, 256];
 		this.ctx = ctx;
 		this.fieldOfView = Math.PI / 4.0;
@@ -46,7 +46,7 @@ export default class Camera {
 	 * -Add listeners.
 	 * -Initial calculations.
 	 */
-	init(): void {
+	private init(): void {
 		this.addListeners();
 		this.updateViewport();
 	}
@@ -131,18 +131,28 @@ export default class Camera {
 	}
 
 	addListeners(): void {
-		let mouseIsDown = false;
+		let lmbDown = false;
+		let rmbDown = false;
 
-		window.addEventListener("mousedown", () => {
-			mouseIsDown = true;
+		window.addEventListener("mousedown", (e) => {
+			if (e.button === 0) {
+				lmbDown = true;
+			} else if (e.button === 2) {
+				rmbDown = true;
+			}
 		});
 
-		window.addEventListener("mouseup", () => {
-			mouseIsDown = false;
+		window.addEventListener("mouseup", (e) => {
+			if (e.button === 0) {
+				lmbDown = false;
+			} else if (e.button === 2) {
+				rmbDown = false;
+			}
 		});
 
 		window.addEventListener("mousemove", (e) => {
-			if (e.shiftKey && mouseIsDown) {
+			if ((e.shiftKey && lmbDown) || rmbDown) {
+				console.log();
 				this.ctx.fillStyle = "#000";
 				this.ctx.fillRect(0, 0, 100000, 100000);
 				const [currentCamX, currentCamY] = this.lookAt;
