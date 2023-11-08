@@ -7,9 +7,9 @@ import {
 	Queen,
 	Rook,
 } from "./chess_piece";
-import GameLogic from "./game_logic";
 import { $, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
+import GameLogic from "./game_logic";
 import TextureStore from "./texture_store";
 
 // add debug object to global scope so you can do `debug.toggleBorders()` in the console to enable chunk boarders etc.

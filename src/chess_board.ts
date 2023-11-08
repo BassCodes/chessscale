@@ -1,14 +1,14 @@
 import Camera from "./camera";
-import { ChessPiece, ChessPieceColor } from "./chess_piece";
+import { ChessPiece } from "./chess_piece";
 import { DARK_SQUARE_COLOR, LIGHT_SQUARE_COLOR, TILE_SIZE } from "./constants";
-import { Point, eqPoint } from "./lib/util";
+import { Point } from "./lib/util";
 
 type tileState = null | ChessPiece;
 const CHUNK_WIDTH = 8;
 
 class Chunk {
 	tiles: Array<Array<tileState>>;
-	discovered: Array<Array<boolean>>;
+	discovered: true | Array<Array<boolean>>;
 	chunkCoordinate: Point;
 	constructor(x: number, y: number) {
 		this.chunkCoordinate = [x, y];
@@ -19,6 +19,9 @@ class Chunk {
 			this.discovered[i] = Array(8).fill(false);
 		}
 	}
+	discoverAll(): void {
+		this.discovered = true;
+	}
 }
 
 export default class ChessBoard {
@@ -27,7 +30,7 @@ export default class ChessBoard {
 		this.chunks = [];
 		for (let x = -1; x <= 1; x++) {
 			for (let y = -1; y <= 1; y++) {
-				this.chunks.push(new Chunk(x, y));
+				this.generateChunk(x, y);
 			}
 		}
 	}
@@ -67,6 +70,7 @@ export default class ChessBoard {
 			}
 		}
 	}
+
 	drawChunkBorders(cam: Camera): void {
 		cam.ctx.lineWidth = 3;
 		cam.ctx.strokeStyle = "green";
@@ -78,6 +82,15 @@ export default class ChessBoard {
 				CHUNK_WIDTH * TILE_SIZE
 			);
 		}
+	}
+
+	private generateChunk(x: number, y: number): Chunk {
+		if (this.getChunk(x, y) !== null) {
+			throw new Error(`Chunk already generated at (${x}, ${y})`);
+		}
+		const chunk = new Chunk(x, y);
+		this.chunks.push(chunk);
+		return chunk;
 	}
 
 	private getChunk(chunk_x: number, chunk_y: number): Chunk | null {
@@ -107,19 +120,21 @@ export default class ChessBoard {
 		return chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH];
 	}
 	setPiece(x: number, y: number, put: ChessPiece | null): boolean {
-		const chunk = this.getChunk(
+		const position: Point = [
 			Math.floor(x / CHUNK_WIDTH),
-			Math.floor(y / CHUNK_WIDTH)
-		);
+			Math.floor(y / CHUNK_WIDTH),
+		];
+		let chunk = this.getChunk(...position);
 		if (chunk === null) {
-			return false;
+			chunk = this.generateChunk(...position);
 		}
 		if (x < 0) {
-			x = 8 - (Math.abs(x) % CHUNK_WIDTH);
+			x = CHUNK_WIDTH - (Math.abs(x) % CHUNK_WIDTH);
 		}
 		if (y < 0) {
-			y = 8 - (Math.abs(y) % CHUNK_WIDTH);
+			y = CHUNK_WIDTH - (Math.abs(y) % CHUNK_WIDTH);
 		}
+
 		chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH] = put;
 		return true;
 	}

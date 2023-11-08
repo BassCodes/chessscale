@@ -1,6 +1,5 @@
 import Camera from "./camera";
 import ChessBoard from "./chess_board";
-import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
 import { Point, addPoint, eqPoint } from "./lib/util";
 
