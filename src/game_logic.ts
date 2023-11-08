@@ -56,8 +56,8 @@ export default class GameLogic {
 		}
 		cam.ctx.lineWidth = 2;
 
-		const piece = this.board.getPiece(...this.selectedPosition) as ChessPiece;
-		if (piece === null) {
+		const piece = this.board.getPiece(...this.selectedPosition);
+		if (piece === null || piece === undefined) {
 			throw new Error("unreachable code executed");
 		}
 		cam.ctx.strokeStyle = "green";

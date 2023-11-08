@@ -16,7 +16,7 @@ class Chunk {
 		this.discovered = Array(8);
 		for (let i = 0; i < 8; i++) {
 			this.tiles[i] = Array(8).fill(null);
-			this.discovered[i] = Array(8).fill(true);
+			this.discovered[i] = Array(8).fill(false);
 		}
 	}
 }
@@ -38,7 +38,11 @@ export default class ChessBoard {
 				for (const [y, item] of column.entries()) {
 					if (item === null) continue;
 
-					cam.ctx.drawImage(item.getImage(), x * TILE_SIZE, y * TILE_SIZE);
+					cam.ctx.drawImage(
+						item.getImage(),
+						(x + CHUNK_WIDTH * chunk.chunkCoordinate[0]) * TILE_SIZE,
+						(y + CHUNK_WIDTH * chunk.chunkCoordinate[1]) * TILE_SIZE
+					);
 				}
 			}
 		}
@@ -63,9 +67,10 @@ export default class ChessBoard {
 			}
 		}
 	}
-	private getChunk(cx: number, cy: number): Chunk | null {
+	private getChunk(chunk_x: number, chunk_y: number): Chunk | null {
 		const chunk = this.chunks.find(
-			(c) => c.chunkCoordinate[0] === cx && c.chunkCoordinate[1] === cy
+			(c) =>
+				c.chunkCoordinate[0] === chunk_x && c.chunkCoordinate[1] === chunk_y
 		);
 		if (chunk === undefined) {
 			return null;
@@ -80,7 +85,13 @@ export default class ChessBoard {
 		if (chunk === null) {
 			return null;
 		}
-		return chunk.tiles[x][y];
+		if (x < 0) {
+			x = 8 - (Math.abs(x) % CHUNK_WIDTH);
+		}
+		if (y < 0) {
+			y = 8 - (Math.abs(y) % CHUNK_WIDTH);
+		}
+		return chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH];
 	}
 	setPiece(x: number, y: number, put: ChessPiece | null): void {
 		const chunk = this.getChunk(
@@ -89,6 +100,12 @@ export default class ChessBoard {
 		);
 		if (chunk === null) {
 			return;
+		}
+		if (x < 0) {
+			x = 8 - (Math.abs(x) % CHUNK_WIDTH);
+		}
+		if (y < 0) {
+			y = 8 - (Math.abs(y) % CHUNK_WIDTH);
 		}
 		chunk.tiles[x % CHUNK_WIDTH][y % CHUNK_WIDTH] = put;
 	}
