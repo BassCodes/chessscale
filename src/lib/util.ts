@@ -1,8 +1,17 @@
 export type Image = HTMLImageElement;
 
 export type Point = [number, number];
-export function addPoint(p1: Point, p2: Point): Point {
+export function addPoint(p1: Point, p2: Point | number): Point {
+	if (typeof p2 === "number") {
+		return [p1[0] + p2, p1[1] + p2];
+	}
 	return [p1[0] + p2[0], p1[1] + p2[1]];
+}
+export function mulPoint(p1: Point, p2: Point | number): Point {
+	if (typeof p2 === "number") {
+		return [p1[0] * p2, p1[1] * p2];
+	}
+	return [p1[0] * p2[0], p1[1] * p2[1]];
 }
 
 export function eqPoint(p1: Point, p2: Point): boolean {
