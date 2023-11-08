@@ -7,8 +7,7 @@ import {
 	Queen,
 	Rook,
 } from "./chess_piece";
-import { TILE_SIZE } from "./constants";
-import { GameLogic } from "./game_logic";
+import GameLogic from "./game_logic";
 import { $, Point, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
 import TextureStore from "./texture_store";
@@ -48,20 +47,21 @@ async function main(): Promise<void> {
 	// Main loop
 	function frame(): void {
 		camera.begin();
-		
 
 		if (last_mouse_event !== null) {
-			const position: Point = camera.screenToWorld((last_mouse_event.x), (last_mouse_event.y));
+			const position: Point = camera.screenToWorld(
+				last_mouse_event.x,
+				last_mouse_event.y
+			);
 			game.clickBoard(...position);
-			
+
 			last_mouse_event = null;
 		}
 
-		game.drawMovements(camera);
 		game.board.drawChunks(camera);
+		game.drawMovements(camera);
 		game.board.drawPieces(camera);
 
-		
 		camera.end();
 
 		requestAnimationFrame(frame);

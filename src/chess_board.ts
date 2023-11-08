@@ -21,7 +21,7 @@ class Chunk {
 	}
 }
 
-export class ChessBoard {
+export default class ChessBoard {
 	private chunks: Array<Chunk>;
 	constructor() {
 		this.chunks = [];

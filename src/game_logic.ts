@@ -1,12 +1,12 @@
 import Camera from "./camera";
-import { ChessBoard } from "./chess_board";
+import ChessBoard from "./chess_board";
 import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
 import { Point, addPoint, eqPoint } from "./lib/util";
 
 // I'm not exactly sure where the line begins and ends between game logic and UI logic, so for now they're mixed somewhat.
 
-export class GameLogic {
+export default class GameLogic {
 	board: ChessBoard;
 	selectedPosition: null | Point = null;
 	constructor() {
@@ -51,18 +51,11 @@ export class GameLogic {
 	}
 
 	drawMovements(cam: Camera): void {
-		cam.ctx.strokeStyle = "red";
-		cam.ctx.lineWidth = 5;
-
 		if (this.selectedPosition === null) {
 			return;
 		}
-		cam.ctx.strokeRect(
-			this.selectedPosition[0] * TILE_SIZE,
-			this.selectedPosition[1] * TILE_SIZE,
-			TILE_SIZE,
-			TILE_SIZE
-		);
+		cam.ctx.lineWidth = 2;
+
 		const piece = this.board.getPiece(...this.selectedPosition) as ChessPiece;
 		if (piece === null) {
 			throw new Error("unreachable code executed");
@@ -77,5 +70,12 @@ export class GameLogic {
 				TILE_SIZE
 			);
 		}
+		cam.ctx.strokeStyle = "red";
+		cam.ctx.strokeRect(
+			this.selectedPosition[0] * TILE_SIZE,
+			this.selectedPosition[1] * TILE_SIZE,
+			TILE_SIZE,
+			TILE_SIZE
+		);
 	}
 }
