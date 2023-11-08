@@ -1,7 +1,0 @@
-Add Sprites
-Add camera (zoom/pan)
-
-## long term
-Animations
-Sounds
-Cards
