@@ -3,7 +3,7 @@ import TextureStore from "./texture_store";
 
 export enum ChessPieceColor {
 	White,
-	black,
+	Black,
 }
 
 export abstract class ChessPiece {
@@ -43,8 +43,8 @@ export class Pawn extends ChessPiece {
 			[1, -1],
 		];
 	}
-	getImage(): Image {
-		return TextureStore.pieces[5];
+	getImage(): Image { 
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[5] : TextureStore.pieces[11];
 	}
 }
 
@@ -156,8 +156,8 @@ export class King extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
 	}
-	getImage(): Image {
-		return TextureStore.pieces[0];
+	getImage(): Image { 
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[0] : TextureStore.pieces[6];
 	}
 }
 
@@ -167,7 +167,7 @@ export class Queen extends ChessPiece {
 		return VERTICAL_HORIZONTAL_DIAGONAL;
 	}
 	getImage(): Image {
-		return TextureStore.pieces[1];
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[1] : TextureStore.pieces[7];
 	}
 }
 
@@ -176,7 +176,7 @@ export class Rook extends ChessPiece {
 		return VERTICAL_HORIZONTAL;
 	}
 	getImage(): Image {
-		return TextureStore.pieces[4];
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[4] : TextureStore.pieces[10];
 	}
 }
 
@@ -185,7 +185,7 @@ export class Bishop extends ChessPiece {
 		return DIAGONAL;
 	}
 	getImage(): Image {
-		return TextureStore.pieces[2];
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[2] : TextureStore.pieces[8];
 	}
 }
 
@@ -194,6 +194,6 @@ export class Knight extends ChessPiece {
 		return KNIGHT_MOVEMENT;
 	}
 	getImage(): Image {
-		return TextureStore.pieces[3];
+		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[3] : TextureStore.pieces[9];
 	}
 }
