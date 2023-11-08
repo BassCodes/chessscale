@@ -24,7 +24,7 @@ class Chunk {
 export class ChessBoard {
 	private chunks: Array<Chunk>;
 	constructor() {
-		this.chunks = [new Chunk(0, 0)];
+		this.chunks = [];
 		for (let x = -3; x <= 3; x++) {
 			for (let y = -3; y <= 3; y++) {
 				this.chunks.push(new Chunk(x, y));
