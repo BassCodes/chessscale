@@ -39,24 +39,17 @@ async function main(): Promise<void> {
 	game.board.setPiece(4, 7, new King(ChessPieceColor.White));
 	game.board.setPiece(3, 7, new Queen(ChessPieceColor.White));
 
-	let last_mouse_event: null | MouseEvent = null;
-	canvas.addEventListener("click", (e) => {
-		last_mouse_event = e;
+	canvas.addEventListener("mousedown", (e) => {
+		game.clickBoard(...camera.screenToWorld(e.x, e.y));
+	});
+
+	canvas.addEventListener("mouseup", (e) => {
+		game.clickBoard(...camera.screenToWorld(e.x, e.y));
 	});
 
 	// Main loop
 	function frame(): void {
 		camera.begin();
-
-		if (last_mouse_event !== null) {
-			const position: Point = camera.screenToWorld(
-				last_mouse_event.x,
-				last_mouse_event.y
-			);
-			game.clickBoard(...position);
-
-			last_mouse_event = null;
-		}
 
 		game.board.drawChunks(camera);
 		game.drawMovements(camera);
