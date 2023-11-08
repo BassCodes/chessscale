@@ -134,23 +134,3 @@ export function loadImage(url: string): Promise<HTMLImageElement> {
 		img.src = url;
 	});
 }
-
-//
-// Development aid errors (again inspired by rust)
-//
-
-// Intended for if else if blocks which are unreachable, but that the type system might not be able to recognize as unreachable
-export class Unreachable extends Error {
-	constructor() {
-		super("Code marked unreachable was run");
-		this.name = "Unreachable";
-	}
-}
-
-// Allows mocking out methods when the return type hasn't been satisfied yet
-export class Unimplemented extends Error {
-	constructor() {
-		super("Code marked unimplemented was run");
-		this.name = "Unimplemented";
-	}
-}

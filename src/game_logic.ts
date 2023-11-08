@@ -2,7 +2,7 @@ import Camera from "./camera";
 import { ChessBoard } from "./chess_board";
 import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
-import { Point, Unreachable, addPoint, eqPoint } from "./lib/util";
+import { Point, addPoint, eqPoint } from "./lib/util";
 
 // I'm not exactly sure where the line begins and ends between game logic and UI logic, so for now they're mixed somewhat.
 
@@ -15,7 +15,10 @@ export class GameLogic {
 
 	clickBoard(x: number, y: number): void {
 		// TODO: mega refactor this
-		const clicked: Point = [Math.floor(x / TILE_SIZE), Math.floor(y / TILE_SIZE)];
+		const clicked: Point = [
+			Math.floor(x / TILE_SIZE),
+			Math.floor(y / TILE_SIZE),
+		];
 		if (this.selectedPosition === null) {
 			if (this.board.getPiece(...clicked) !== null) {
 				this.selectedPosition = clicked;
@@ -62,7 +65,7 @@ export class GameLogic {
 		);
 		const piece = this.board.getPiece(...this.selectedPosition) as ChessPiece;
 		if (piece === null) {
-			throw new Unreachable();
+			throw new Error("unreachable code executed");
 		}
 		cam.ctx.strokeStyle = "green";
 		for (const move of piece.getMoves()) {

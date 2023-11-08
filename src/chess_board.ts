@@ -1,7 +1,7 @@
 import Camera from "./camera";
 import { ChessPiece, ChessPieceColor } from "./chess_piece";
-import { TILE_SIZE } from "./constants";
-import { Point } from "./lib/util";
+import { DARK_SQUARE_COLOR, LIGHT_SQUARE_COLOR, TILE_SIZE } from "./constants";
+import { Point, eqPoint } from "./lib/util";
 
 type tileState = null | ChessPiece;
 const CHUNK_WIDTH = 8;
@@ -37,8 +37,6 @@ export class ChessBoard {
 			for (const [x, column] of chunk.tiles.entries()) {
 				for (const [y, item] of column.entries()) {
 					if (item === null) continue;
-					const color = item.color === ChessPieceColor.White ? "#0FF" : "#00f";
-					cam.ctx.fillStyle = color;
 
 					cam.ctx.drawImage(item.getImage(), x * TILE_SIZE, y * TILE_SIZE);
 				}
@@ -51,9 +49,9 @@ export class ChessBoard {
 			for (let x = 0; x < 8; x++) {
 				for (let y = 0; y < 8; y++) {
 					if ((x + y) % 2 === 0) {
-						cam.ctx.fillStyle = "#b4955f";
+						cam.ctx.fillStyle = LIGHT_SQUARE_COLOR;
 					} else {
-						cam.ctx.fillStyle = "#805833";
+						cam.ctx.fillStyle = DARK_SQUARE_COLOR;
 					}
 					cam.ctx.fillRect(
 						(x + chunk.chunkCoordinate[0] * CHUNK_WIDTH) * TILE_SIZE,

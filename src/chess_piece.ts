@@ -1,4 +1,4 @@
-import { Image, Point, Unimplemented } from "./lib/util";
+import { Image, Point } from "./lib/util";
 import TextureStore from "./texture_store";
 
 export enum ChessPieceColor {
@@ -20,11 +20,11 @@ export abstract class ChessPiece {
 	}
 
 	getImage(): Image {
-		throw new Unimplemented();
+		throw new Error("unimplemented");
 	}
 	// Points in which the piece can move relative to the current point
 	getMoves(): Array<Point> {
-		throw new Unimplemented();
+		throw new Error("unimplemented");
 	}
 	// Points in which the piece can capture (if there is a piece) relative to the current point
 	getCaptures(): Array<Point> {
