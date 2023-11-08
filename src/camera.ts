@@ -1,4 +1,4 @@
-import { Point } from "./lib/util.js";
+import { Point } from "./lib/util";
 
 /**
  * Camera by @robashton returns Camera object.

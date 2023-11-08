@@ -1,3 +1,5 @@
+export type Image = HTMLImageElement;
+
 export type Point = [number, number];
 export function addPoint(p1: Point, p2: Point): Point {
 	return [p1[0] + p2[0], p1[1] + p2[1]];

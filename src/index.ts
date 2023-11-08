@@ -11,6 +11,7 @@ import { TILE_SIZE } from "./constants";
 import { GameLogic } from "./game_logic";
 import { $, Point, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
+import TextureStore from "./texture_store";
 
 async function main(): Promise<void> {
 	const { canvas, ctx } = expect(
@@ -21,6 +22,8 @@ async function main(): Promise<void> {
 		$("pfcontainer"),
 		"Could not insert playfield canvas into DOM"
 	).appendChild(canvas);
+
+	await TextureStore.init();
 
 	const camera = new Camera(ctx);
 
@@ -42,7 +45,6 @@ async function main(): Promise<void> {
 		last_mouse_event = e;
 	});
 
-	ctx.lineWidth = 5;
 	// Main loop
 	function frame(): void {
 		camera.begin();

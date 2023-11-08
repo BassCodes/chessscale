@@ -1,7 +1,7 @@
 // Split a tiled spritesheet image into many different images.
 // Useful to reduce http requests from loading many tiny images.
 
-import { unwrap } from "./util.js";
+import { unwrap } from "./util";
 
 export abstract class SpriteSlicer {
 	static slice(

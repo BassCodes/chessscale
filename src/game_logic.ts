@@ -1,4 +1,4 @@
-import Camera from "./camera.js";
+import Camera from "./camera";
 import { ChessBoard } from "./chess_board";
 import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
@@ -49,6 +49,8 @@ export class GameLogic {
 
 	drawMovements(cam: Camera): void {
 		cam.ctx.strokeStyle = "red";
+		cam.ctx.lineWidth = 5;
+
 		if (this.selectedPosition === null) {
 			return;
 		}

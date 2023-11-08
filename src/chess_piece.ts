@@ -1,4 +1,5 @@
-import { Point, Unimplemented } from "./lib/util";
+import { Image, Point, Unimplemented } from "./lib/util";
+import TextureStore from "./texture_store";
 
 export enum ChessPieceColor {
 	White,
@@ -16,6 +17,10 @@ export abstract class ChessPiece {
 		} else {
 			this.facing = [0, 1];
 		}
+	}
+
+	getImage(): Image {
+		throw new Unimplemented();
 	}
 	// Points in which the piece can move relative to the current point
 	getMoves(): Array<Point> {
@@ -38,6 +43,9 @@ export class Pawn extends ChessPiece {
 			[1, -1],
 		];
 	}
+	getImage(): Image {
+		return TextureStore.pieces[5];
+	}
 }
 
 const ADJACENT_PIECES: Array<Point> = [
@@ -55,6 +63,9 @@ export class King extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
 	}
+	getImage(): Image {
+		return TextureStore.pieces[0];
+	}
 }
 
 // TODO add behavior for other pieces
@@ -62,11 +73,17 @@ export class Queen extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
 	}
+	getImage(): Image {
+		return TextureStore.pieces[1];
+	}
 }
 
 export class Rook extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
+	}
+	getImage(): Image {
+		return TextureStore.pieces[4];
 	}
 }
 
@@ -74,10 +91,16 @@ export class Bishop extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
 	}
+	getImage(): Image {
+		return TextureStore.pieces[2];
+	}
 }
 
 export class Knight extends ChessPiece {
 	getMoves(): Array<Point> {
 		return ADJACENT_PIECES;
+	}
+	getImage(): Image {
+		return TextureStore.pieces[3];
 	}
 }
