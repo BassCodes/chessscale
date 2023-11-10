@@ -9,6 +9,7 @@ import {
 } from "./chess_piece";
 import { $, createCanvas, expect } from "./lib/util";
 import Camera from "./camera";
+import UI from "./ui";
 import GameLogic from "./game_logic";
 import TextureStore from "./texture_store";
 
@@ -47,6 +48,8 @@ async function main(): Promise<void> {
 
 	const camera = new Camera(ctx);
 
+	const ui = new UI();
+
 	const game = new GameLogic();
 	for (let i = 0; i < 8; i++) {
 		game.board.setPiece(i, 6, new Pawn(ChessPieceColor.White));
@@ -73,11 +76,11 @@ async function main(): Promise<void> {
 	game.board.setPiece(3, 0, new Queen(ChessPieceColor.Black));
 
 	canvas.addEventListener("mousedown", (e) => {
-		game.clickBoard(...camera.screenToWorld(e.x, e.y));
+		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board);
 	});
 
 	canvas.addEventListener("mouseup", (e) => {
-		game.clickBoard(...camera.screenToWorld(e.x, e.y));
+		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board);
 	});
 
 	// Main loop
@@ -88,7 +91,7 @@ async function main(): Promise<void> {
 		if (window.debug.cborders) {
 			game.board.drawChunkBorders(camera);
 		}
-		game.drawMovements(camera);
+		ui.drawMovements(camera, game.board);
 		game.board.drawPieces(camera);
 
 		camera.end();
