@@ -1,53 +1,62 @@
 import Camera from "./camera";
 import ChessBoard from "./chess_board";
+import { ChessPiece } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
 import { Point, addPoint, eqPoint, mulPoint } from "./lib/util";
 
-// I'm not exactly sure where the line begins and ends between game logic and UI logic, so for now they're mixed somewhat.
 
 export default class UI {
 	selectedPosition: null | Point = null;
+	selectedPiece: null | ChessPiece = null;
 
-	// TODO: most of this should be within a separate UI class.
-	// This class should be primarily for handling turns of the the players and that stuff
-	clickBoard(x: number, y: number, board: ChessBoard): void {
+
+	clickBoard(x: number, y: number, board: ChessBoard, key: string): void {
 		// TODO: mega refactor this
 		const clicked: Point = [
 			Math.floor(x / TILE_SIZE),
 			Math.floor(y / TILE_SIZE),
 		];
-		if (this.selectedPosition === null) {
-			if (board.getPiece(...clicked) !== null) {
-				this.selectedPosition = clicked;
-			} else {
-				this.selectedPosition = null;
-			}
-			return;
-		}
 
-		if (eqPoint(clicked, this.selectedPosition)) {
+		if (key === "up" && this.selectedPosition === null) {
 			this.selectedPosition = null;
+			this.selectedPiece = null;
 			return;
 		}
 
-		const pieceAtPosition = board.getPiece(...this.selectedPosition);
-		if (pieceAtPosition === null) {
+		if (key === "down" && this.selectedPiece === board.getPiece(...clicked)) {
+			this.selectedPosition = null;
+			this.selectedPiece = null;
+			return;
+		}
+
+		if (key === "down" && board.getPiece(...clicked) !== null) {
+			this.selectedPosition = clicked;
+			this.selectedPiece = board.getPiece(...clicked);
+			return;
+		}
+	
+		if (this.selectedPiece === null || this.selectedPosition === null) {
 			return;
 		}
 
 		// TODO: check if move is valid before moving
-		for (const move of pieceAtPosition.getMoves()) {
+		for (const move of this.selectedPiece.getMoves()) {
 			const updatedPosition = addPoint(move, this.selectedPosition);
 			if (eqPoint(updatedPosition, clicked)) {
-				board.setPiece(...updatedPosition, pieceAtPosition);
+				board.setPiece(...updatedPosition, this.selectedPiece);
 				board.setPiece(...this.selectedPosition, null);
 				this.selectedPosition = null;
-				break;
+				return;
 			}
 		}
+		
+		if (key === "up") {
+			return;
+		}
+		this.selectedPosition = null;
+		this.selectedPosition = null;
 	}
 
-	// Should also mostly be in UI class
 	drawMovements(cam: Camera, board: ChessBoard): void {
 		if (this.selectedPosition === null) {
 			return;

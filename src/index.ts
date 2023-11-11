@@ -76,11 +76,11 @@ async function main(): Promise<void> {
 	game.board.setPiece(3, 0, new Queen(ChessPieceColor.Black));
 
 	canvas.addEventListener("mousedown", (e) => {
-		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board);
+		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board, "down");
 	});
 
 	canvas.addEventListener("mouseup", (e) => {
-		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board);
+		ui.clickBoard(...camera.screenToWorld(e.x, e.y), game.board, "up");
 	});
 
 	// Main loop
@@ -91,8 +91,9 @@ async function main(): Promise<void> {
 		if (window.debug.cborders) {
 			game.board.drawChunkBorders(camera);
 		}
-		ui.drawMovements(camera, game.board);
+		
 		game.board.drawPieces(camera);
+		ui.drawMovements(camera, game.board);
 
 		camera.end();
 
