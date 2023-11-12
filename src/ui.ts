@@ -17,8 +17,6 @@ export default class UI {
 			Math.floor(y / TILE_SIZE),
 		];
 
-		console.log(clicked, this.selectedPiece, this.selectedPosition)
-
 		if (key === "up" && this.selectedPosition === null) {
 			this.selectedPosition = null;
 			this.selectedPiece = null;
