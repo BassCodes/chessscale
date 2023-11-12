@@ -63,7 +63,7 @@ async function main(): Promise<void> {
 	game.board.setPiece(1, 7, new Knight(ChessPieceColor.White));
 	game.board.setPiece(2, 7, new Bishop(ChessPieceColor.White));
 	game.board.setPiece(5, 7, new Bishop(ChessPieceColor.White));
-	game.board.setPiece(4, 7, new Queen(ChessPieceColor.White));
+	game.board.setPiece(4, 7, new King(ChessPieceColor.White));
 	game.board.setPiece(3, 7, new Queen(ChessPieceColor.White));
 
 	game.board.setPiece(0, 0, new Rook(ChessPieceColor.Black));
