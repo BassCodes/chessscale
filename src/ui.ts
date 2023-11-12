@@ -39,7 +39,6 @@ export default class UI {
 			return;
 		}
 
-		// TODO: check if move is valid before moving
 		for (const move of this.selectedPiece.getMoves()) {
 			const updatedPosition = addPoint(move, this.selectedPosition);
 			if (eqPoint(updatedPosition, clicked)) {
