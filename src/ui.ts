@@ -1,6 +1,6 @@
 import Camera from "./camera";
 import ChessBoard from "./chess_board";
-import { ChessPiece } from "./chess_piece";
+import { ChessPiece, Pawn } from "./chess_piece";
 import { TILE_SIZE } from "./constants";
 import { Point, addPoint, eqPoint, mulPoint } from "./lib/util";
 
@@ -45,6 +45,9 @@ export default class UI {
 			if (eqPoint(updatedPosition, clicked)) {
 				board.setPiece(...updatedPosition, this.selectedPiece);
 				board.setPiece(...this.selectedPosition, null);
+				if (this.selectedPiece instanceof Pawn) {
+					this.selectedPiece.firstMove = false;
+				}
 				this.selectedPosition = null;
 				this.selectedPiece = null;
 				return;

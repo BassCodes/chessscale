@@ -8,15 +8,8 @@ export enum ChessPieceColor {
 
 export abstract class ChessPiece {
 	readonly color: ChessPieceColor;
-	facing: Point;
 	constructor(color: ChessPieceColor) {
 		this.color = color;
-		if (color === ChessPieceColor.White) {
-			// I didn't think too hard about this
-			this.facing = [0, -1];
-		} else {
-			this.facing = [0, 1];
-		}
 	}
 
 	getImage(): Image {
@@ -34,8 +27,13 @@ export abstract class ChessPiece {
 }
 
 export class Pawn extends ChessPiece {
+	firstMove: boolean = true;
 	getMoves(): Array<Point> {
-		return [this.facing];
+		const PAWN_MOVEMENT: Array<Point> = [(this.color === ChessPieceColor.White) ? [0, -1] : [0, 1]];
+		if (this.firstMove) {
+			PAWN_MOVEMENT.push((this.color === ChessPieceColor.White) ? [0, -2] : [0, 2]);
+		}
+		return PAWN_MOVEMENT;
 	}
 	getCaptures(): Array<Point> {
 		return [
@@ -47,6 +45,8 @@ export class Pawn extends ChessPiece {
 		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[5] : TextureStore.pieces[11];
 	}
 }
+
+
 
 const ADJACENT_PIECES: Array<Point> = [
 	[1, 1],
