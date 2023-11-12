@@ -36,17 +36,12 @@ export class Pawn extends ChessPiece {
 		return PAWN_MOVEMENT;
 	}
 	getCaptures(): Array<Point> {
-		return [
-			[-1, -1],
-			[1, -1],
-		];
+		return (this.color === ChessPieceColor.White) ?  [[-1, -1], [1, -1],] : [[-1, 1], [1, 1],];
 	}
 	getImage(): Image { 
 		return (this.color === ChessPieceColor.White) ? TextureStore.pieces[5] : TextureStore.pieces[11];
 	}
 }
-
-
 
 const ADJACENT_PIECES: Array<Point> = [
 	[1, 1],
